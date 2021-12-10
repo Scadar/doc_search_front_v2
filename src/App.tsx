@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useAppSelector } from "./hooks/redux";
+import { authApi } from "./services/authService";
+import PrivateRoutes from "./routes/PrivateRoutes";
+import PublicRoutes from "./routes/PublicRoutes";
+import GlobalLoading from "./components/GlobalLoading";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const { user, globalLoading } = useAppSelector(state => state.auth);
+    authApi.useFetchProfileQuery();
+
+    const RouteComponent = user ? PrivateRoutes : PublicRoutes;
+
+    if (globalLoading) {
+        return <GlobalLoading/>;
+    }
+
+    return (
+        <RouteComponent/>
+    );
+};
 
 export default App;
